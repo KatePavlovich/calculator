@@ -60,6 +60,10 @@ button:focus {
   grid-column: 4;
   background: #4bc5d2;
 }
+.formula-class {
+  color: #777;
+  font-size: 0.8em;
+}
 
 @media (min-width: 768px) {
 .calculator {
