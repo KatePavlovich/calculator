@@ -6,6 +6,7 @@ let calculator = {
     num2: '',
     result: '0',
     needReset: false,
+    limit: false,
     display: document.querySelector("#display"),
     clear: document.querySelector("#clear"),
     deleteLast: document.querySelector("#deleteLast"),
@@ -101,6 +102,7 @@ resultButtonClickListener: function () {
         break;
     }
     this.needReset = false;
+    this.limit = false;
     this.result = this.operations[this.operator](this.num1, this.num2);
     this.num1 = this.result;
     this.num2 = '';
@@ -108,31 +110,37 @@ resultButtonClickListener: function () {
     this.formula.innerHTML += `= ${this.result}`; 
 },
 
-
-
-numberButtonsClickListener: function (e) {
+numberButtonsClickListener: function(e) {
 //sets num1 & num2 values
-   if (!this.needReset) {
-    if (this.display.innerHTML[0] === '0' && this.display.innerHTML.indexOf('.') === -1) {
-        this.display.innerHTML = this.display.innerHTML.substring(1);
-    } 
-    this.display.innerHTML += e.currentTarget.innerHTML;
-    this.num1 += e.currentTarget.innerHTML;
-   } else {
-       if (this.display.innerHTML === this.operator) {
-        this.display.innerHTML = '';
+if (!this.limit) {
+    if (this.display.innerHTML.length > 4) {
+        this.limit = true;
+        let tempDisplayValue = this.display.innerHTML;
+        this.display.innerHTML = 'limit over';
+        setTimeout(() => this.display.innerHTML = tempDisplayValue, 1000);
+        
+    } else {
+        if (!this.needReset) {
+            if (this.display.innerHTML[0] === '0' && this.display.innerHTML.indexOf('.') === -1) {
+                this.display.innerHTML = this.display.innerHTML.substring(1);
+            } 
+            this.display.innerHTML += e.currentTarget.innerHTML;
+            this.num1 += e.currentTarget.innerHTML;
+        } else {
+            if (this.display.innerHTML === this.operator) {
+                this.display.innerHTML = '';
+                }
+                this.display.innerHTML += e.currentTarget.innerHTML;
+                this.num2 += e.currentTarget.innerHTML;
         }
-        this.display.innerHTML += e.currentTarget.innerHTML;
-        this.num2 += e.currentTarget.innerHTML;
-   }
-   this.formula.innerHTML += e.currentTarget.innerHTML;
-},
+        this.formula.innerHTML += e.currentTarget.innerHTML;
+    }
+    }
+   },
 
-
-
-
-operationButtonsClickListener: function (e) {
+operationButtonsClickListener: function(e) {
     // checks for operator
+    this.limit = false;
     this.needReset = true;
     this.num1 = this.display.innerHTML;
     this.operator = e.currentTarget.innerHTML;
@@ -143,8 +151,10 @@ operationButtonsClickListener: function (e) {
 
     //checks if there are many operators in a row (+*-/=/). operator is the last clicked
     if (this.formula.innerHTML[temp].match(/[\s-\+x÷]/) && this.formula.innerHTML[temp-1].match(/[\s-\+x÷]/)) {
-        this.operator = this.formula.innerHTML[temp-1];
-        this.formula.innerHTML = this.formula.innerHTML.slice(0, -2) + this.operator;
+        
+        console.log(this.operator);
+        this.formula.innerHTML = this.formula.innerHTML.slice(0, -2) + e.currentTarget.innerHTML;
+        this.operator = e.currentTarget.innerHTML;
         this.display.innerHTML = e.currentTarget.innerHTML;
         this.num1 = this.formula.innerHTML.slice(0, -1);
     }
