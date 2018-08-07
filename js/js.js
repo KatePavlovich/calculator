@@ -1,138 +1,152 @@
-(() => {
-let operator;
-let num1 = '';
-let num2 = '';
-let result = '0';
-let needReset = false;
-let display = document.querySelector("#display");
-let clear = document.querySelector("#clear");
-let deleteLast = document.querySelector("#deleteLast");
-let equals = document.querySelector("#equals");
-let decimal = document.querySelector("#decimal");
-let formula = document.querySelector("#formula");
-let numberButtons = document.querySelectorAll(".number");
-let operationButtons = document.querySelectorAll(".operation-button");
+//(() => {
+let calculator = {
 
-let operations = {
-    '+': (a,b) => a*1+b*1,
-    '-': (a,b) => a-b,
-    '*': (a,b) => a*b,
-    '/': (a,b) => a/b
-}
+    operator: null,
+    num1: '',
+    num2: '',
+    result: '0',
+    needReset: false,
+    display: document.querySelector("#display"),
+    clear: document.querySelector("#clear"),
+    deleteLast: document.querySelector("#deleteLast"),
+    equals: document.querySelector("#equals"),
+    decimal: document.querySelector("#decimal"),
+    formula: document.querySelector("#formula"),
+    numberButtons: document.querySelectorAll(".number"),
+    operationButtons: document.querySelectorAll(".operation-button"),
 
-function clearDisplayButtonListener() {
+    operations: {
+        '+': (a,b) => a*1+b*1,
+        '-': (a,b) => a-b,
+        '*': (a,b) => a*b,
+        '/': (a,b) => a/b
+    },
+
+    initialise: function() {
+        let that = this;
+
+        clear.addEventListener('click', (e) => that.clearDisplayButtonListener(e));
+        decimal.addEventListener('click', (e) => that.getDecimalButtonListener(e));
+        deleteLast.addEventListener('click', (e) => that.clearDisplayLastElementListener(e));
+        equals.addEventListener('click', (e) => that.resultButtonClickListener(e));
+        this.numberButtons.forEach(i => i.addEventListener("click", (e) => that.numberButtonsClickListener(e)));
+        this.operationButtons.forEach(i => i.addEventListener("click", (e) => that.operationButtonsClickListener(e)));
+
+    },
+
+clearDisplayButtonListener: function (e) {
     //reset to default values
-    display.innerHTML = '0';
-    needReset = false;
-    formula.innerHTML = '';
-    num1 = '';
-    num2 = '';
-}
+    this.display.innerHTML = '0';
+    this.needReset = false;
+    this.formula.innerHTML = '';
+    this.num1 = '';
+    this.num2 = '';
+},
 
-clear.addEventListener('click', clearDisplayButtonListener);
 
-function getDecimalButtonListener() {
+
+getDecimalButtonListener: function (e) {
     //add '.' to numbers and checks for '.' to be the one
-    if (display.innerHTML.indexOf('.') === -1) {
-        if (display.innerHTML === '0' || display.innerHTML.match(/[\s-\+x÷]/)) { 
-            display.innerHTML = '0.';
-            formula.innerHTML = '0.';
+    if (this.display.innerHTML.indexOf('.') === -1) {
+        if (this.display.innerHTML === '0' || this.display.innerHTML.match(/[\s-\+x÷]/)) { 
+            this.display.innerHTML = '0.';
+            this.formula.innerHTML = '0.';
         } else {  
-            display.innerHTML = display.innerHTML + '.';
-            formula.innerHTML = formula.innerHTML.slice(0,-1) + display.innerHTML;
+            this.display.innerHTML = this.display.innerHTML + '.';
+            this.formula.innerHTML = this.formula.innerHTML.slice(0,-1) + this.display.innerHTML;
         }
-        if (!needReset) {
-            num1 = display.innerHTML;
+        if (!this.needReset) {
+            this.num1 = this.display.innerHTML;
         } else {
-            num2 = display.innerHTML;
+            this.num2 = this.display.innerHTML;
         }
     }
-}
+},
 
-decimal.addEventListener('click', getDecimalButtonListener);
 
-function clearDisplayLastElementListener() {
+
+clearDisplayLastElementListener: function (e) {
     //logic of 'CE' button: delete last element
-    display.innerHTML = display.innerHTML.slice(0, -1);
-    if (display.innerHTML === '') {
-        display.innerHTML = '0';
-        num1 = '0';
-        formula.innerHTML = '0';
+    this.display.innerHTML = this.display.innerHTML.slice(0, -1);
+    if (this.display.innerHTML === '') {
+        this.display.innerHTML = '0';
+        this.num1 = '0';
+        this.formula.innerHTML = '0';
     }
     
-    if (!needReset) {
-        num1 = display.innerHTML;
+    if (!this.needReset) {
+        this.num1 = this.display.innerHTML;
     } else {
-        num2 = display.innerHTML;
+        this.num2 = this.display.innerHTML;
     }
-    formula.innerHTML = display.innerHTML;  
-}
+    this.formula.innerHTML = this.display.innerHTML;  
+},
 
-deleteLast.addEventListener('click', clearDisplayLastElementListener);
 
-function resultButtonClickListener() {
+
+resultButtonClickListener: function () {
     //sets the result
-    if (num2 === '' && operator === undefined) {
-        console.log(operator);
-        display.innerHTML = num1;
-        formula.innerHTML += `= ${num1}`;
+    if (this.num2 === '' && this.operator === undefined) {
+       // console.log(operator);
+       this.display.innerHTML = this.num1;
+       this.formula.innerHTML += `= ${this.num1}`;
     }
 
-    switch (operator) {
+    switch (this.operator) {
         case 'x':
-        operator = '*';
+        this.operator = '*';
         break;
         case '÷':
-        operator = '/';
+        this.operator = '/';
         break;
     }
-    needReset = false;
-    result = operations[operator](num1, num2);
-    num1 = result;
-    num2 = '';
-    display.innerHTML = result;
-    formula.innerHTML += `= ${result}`; 
-}
+    this.needReset = false;
+    this.result = this.operations[this.operator](this.num1, this.num2);
+    this.num1 = this.result;
+    this.num2 = '';
+    this.display.innerHTML = this.result;
+    this.formula.innerHTML += `= ${this.result}`; 
+},
 
-equals.addEventListener('click', resultButtonClickListener);
 
-function numberButtonsClickListener(e) {
+
+numberButtonsClickListener: function (e) {
 //sets num1 & num2 values
-   if (!needReset) {
-    if (display.innerHTML[0] === '0' && display.innerHTML.indexOf('.') === -1) {
-        display.innerHTML = display.innerHTML.substring(1);
+   if (!this.needReset) {
+    if (this.display.innerHTML[0] === '0' && this.display.innerHTML.indexOf('.') === -1) {
+        this.display.innerHTML = this.display.innerHTML.substring(1);
     } 
-    display.innerHTML += e.currentTarget.innerHTML;
-    num1 += e.currentTarget.innerHTML;
+    this.display.innerHTML += e.currentTarget.innerHTML;
+    this.num1 += e.currentTarget.innerHTML;
    } else {
-       if (display.innerHTML === operator) {
-            display.innerHTML = '';
+       if (this.display.innerHTML === this.operator) {
+        this.display.innerHTML = '';
         }
-        display.innerHTML += e.currentTarget.innerHTML;
-        num2 += e.currentTarget.innerHTML;
+        this.display.innerHTML += e.currentTarget.innerHTML;
+        this.num2 += e.currentTarget.innerHTML;
    }
-   formula.innerHTML += e.currentTarget.innerHTML;
-}
-
-numberButtons.forEach(i => i.addEventListener("click", numberButtonsClickListener));
+   this.formula.innerHTML += e.currentTarget.innerHTML;
+},
 
 
-function operationButtonsClickListener(e) {
+
+
+operationButtonsClickListener: function (e) {
     // checks for operator
-    needReset = true;
-    num1 = display.innerHTML;
-    operator = e.currentTarget.innerHTML;
-    display.innerHTML = e.currentTarget.innerHTML;
-    formula.innerHTML += e.currentTarget.innerHTML;
+    this.needReset = true;
+    this.num1 = this.display.innerHTML;
+    this.operator = e.currentTarget.innerHTML;
+    this.display.innerHTML = e.currentTarget.innerHTML;
+    this.formula.innerHTML += e.currentTarget.innerHTML;
 
-    let temp = formula.innerHTML.length-1;
+    let temp = this.formula.innerHTML.length-1;
 
     //checks if there are many operators in a row (+*-/=/). operator is the last clicked
-    if (formula.innerHTML[temp].match(/[\s-\+x÷]/) && formula.innerHTML[temp-1].match(/[\s-\+x÷]/)) {
-        operator = formula.innerHTML[temp-1];
-        formula.innerHTML = formula.innerHTML.slice(0, -2) + operator;
-        display.innerHTML = e.currentTarget.innerHTML;
-        num1 = formula.innerHTML.slice(0, -1);
+    if (this.formula.innerHTML[temp].match(/[\s-\+x÷]/) && this.formula.innerHTML[temp-1].match(/[\s-\+x÷]/)) {
+        this.operator = this.formula.innerHTML[temp-1];
+        this.formula.innerHTML = this.formula.innerHTML.slice(0, -2) + this.operator;
+        this.display.innerHTML = e.currentTarget.innerHTML;
+        this.num1 = this.formula.innerHTML.slice(0, -1);
     }
 
     //this code should count many operations in a row (sample: 1+5-8*6=?). but it doesn't work correctly now
@@ -156,6 +170,7 @@ function operationButtonsClickListener(e) {
         formula.innerHTML = result + operator; 
        }*/
 }
+}
+//})();
 
-operationButtons.forEach(i => i.addEventListener("click", operationButtonsClickListener));
-})();
+calculator.initialise();
