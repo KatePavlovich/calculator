@@ -1,29 +1,30 @@
-//(() => {
-let calculator = {
+class Calculator {
+constructor() {
+    this.operator = null;
+    this.num1 = '';
+    this.num2 = '';
+    this.result = '0';
+    this.needReset = false;
+    this.limit = false;
+    this.display = document.querySelector("#display");
+    this.clear = document.querySelector("#clear");
+    this.deleteLast = document.querySelector("#deleteLast");
+    this.equals = document.querySelector("#equals");
+    this.decimal = document.querySelector("#decimal");
+    this.formula = document.querySelector("#formula");
+    this.numberButtons = document.querySelectorAll(".number");
+    this.operationButtons = document.querySelectorAll(".operation-button");
 
-    operator: null,
-    num1: '',
-    num2: '',
-    result: '0',
-    needReset: false,
-    limit: false,
-    display: document.querySelector("#display"),
-    clear: document.querySelector("#clear"),
-    deleteLast: document.querySelector("#deleteLast"),
-    equals: document.querySelector("#equals"),
-    decimal: document.querySelector("#decimal"),
-    formula: document.querySelector("#formula"),
-    numberButtons: document.querySelectorAll(".number"),
-    operationButtons: document.querySelectorAll(".operation-button"),
-
-    operations: {
+    this.operations = {
         '+': (a,b) => a*1+b*1,
         '-': (a,b) => a-b,
         '*': (a,b) => a*b,
         '/': (a,b) => a/b
-    },
+    };
+}
+ 
 
-    initialise: function() {
+    initialise() {
         let that = this;
 
         clear.addEventListener('click', (e) => that.clearDisplayButtonListener(e));
@@ -32,21 +33,20 @@ let calculator = {
         equals.addEventListener('click', (e) => that.resultButtonClickListener(e));
         this.numberButtons.forEach(i => i.addEventListener("click", (e) => that.numberButtonsClickListener(e)));
         this.operationButtons.forEach(i => i.addEventListener("click", (e) => that.operationButtonsClickListener(e)));
+    };
 
-    },
-
-clearDisplayButtonListener: function (e) {
+clearDisplayButtonListener(e) {
     //reset to default values
     this.display.innerHTML = '0';
     this.needReset = false;
     this.formula.innerHTML = '';
     this.num1 = '';
     this.num2 = '';
-},
+};
 
 
 
-getDecimalButtonListener: function (e) {
+getDecimalButtonListener(e) {
     //add '.' to numbers and checks for '.' to be the one
     if (this.display.innerHTML.indexOf('.') === -1) {
         if (this.display.innerHTML === '0' || this.display.innerHTML.match(/[\s-\+x÷]/)) { 
@@ -62,11 +62,9 @@ getDecimalButtonListener: function (e) {
             this.num2 = this.display.innerHTML;
         }
     }
-},
+}
 
-
-
-clearDisplayLastElementListener: function (e) {
+clearDisplayLastElementListener(e) {
     //logic of 'CE' button: delete last element
     this.display.innerHTML = this.display.innerHTML.slice(0, -1);
     if (this.display.innerHTML === '') {
@@ -81,11 +79,9 @@ clearDisplayLastElementListener: function (e) {
         this.num2 = this.display.innerHTML;
     }
     this.formula.innerHTML = this.display.innerHTML;  
-},
+}
 
-
-
-resultButtonClickListener: function () {
+resultButtonClickListener() {
     //sets the result
     if (this.num2 === '' && this.operator === undefined) {
        // console.log(operator);
@@ -108,12 +104,12 @@ resultButtonClickListener: function () {
     this.num2 = '';
     this.display.innerHTML = this.result;
     this.formula.innerHTML += `= ${this.result}`; 
-},
+};
 
-numberButtonsClickListener: function(e) {
+numberButtonsClickListener(e) {
 //sets num1 & num2 values
 if (!this.limit) {
-    if (this.display.innerHTML.length > 4) {
+    if (this.display.innerHTML.length > 11) {
         this.limit = true;
         let tempDisplayValue = this.display.innerHTML;
         this.display.innerHTML = 'limit over';
@@ -136,9 +132,9 @@ if (!this.limit) {
         this.formula.innerHTML += e.currentTarget.innerHTML;
     }
     }
-   },
+   };
 
-operationButtonsClickListener: function(e) {
+operationButtonsClickListener(e) {
     // checks for operator
     this.limit = false;
     this.needReset = true;
@@ -179,8 +175,5 @@ operationButtonsClickListener: function(e) {
         num2 = '';
         formula.innerHTML = result + operator; 
        }*/
+};
 }
-}
-//})();
-
-calculator.initialise();
